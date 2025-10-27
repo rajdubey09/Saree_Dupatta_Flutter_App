@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "700225562860",
+    "project_id": "sareedupatta-eb797",
+    "storage_bucket": "sareedupatta-eb797.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700225562860:android:6a8da6a0fd943d256f9dc9",
+        "android_client_info": {
+          "package_name": "com.example.saree_dupatta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYKw4QFMTBH2Vm3Gg6hLkx6W9fxvXDzcI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
