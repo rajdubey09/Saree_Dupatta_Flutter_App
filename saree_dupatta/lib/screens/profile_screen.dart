@@ -1,6 +1,8 @@
 // lib/screens/profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:saree_dupatta/screens/wishlist_screen.dart';
 import 'cart_screen.dart';
+import 'package:saree_dupatta/data/wishlist_manager.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -106,7 +108,12 @@ class ProfileScreen extends StatelessWidget {
               title: "My Wishlist",
               subtitle: "Your saved favourites",
               onTap: () {
-                // TODO: navigate to Wishlist
+                final wishlistItems = WishlistManager.getWishlist();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WishlistScreen(wishlistItems: wishlistItems)),
+                );
               },
             ),
 

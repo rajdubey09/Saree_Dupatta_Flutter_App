@@ -1,43 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:saree_dupatta/screens/checkout_screen.dart';
+import 'package:saree_dupatta/data/wishlist_manager.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final WishlistManager wishlistManager = WishlistManager();
+
+  final List<String> bannerImages = [
+    'assets/images/saree1.png',
+    'assets/images/saree2.jpg',
+    'assets/images/saree3.jpg',
+    'assets/images/saree4.jpg',
+  ];
+
+  final List<Map<String, String>> products = [
+    {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'assets/images/saree1.png'},
+    {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'assets/images/saree2.jpg'},
+    {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'assets/images/saree3.jpg'},
+    {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.jpg'},
+    {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'assets/images/saree1.png'},
+    {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'assets/images/saree2.jpg'},
+    {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'assets/images/saree3.jpg'},
+    {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.jpg'},
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    final List<String> bannerImages = [
-      'https://images.unsplash.com/photo-1603898037225-01abff9f2e8f',
-      'https://images.unsplash.com/photo-1620799140408-edc6dcb6c7d4',
-      'https://images.unsplash.com/photo-1603884973818-29d038fcae23',
-      'https://images.unsplash.com/photo-1604061986761-1b0e6c7f5a39',
-    ];
-
-    final List<Map<String, String>> products = [
-      {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'https://cdn.pixabay.com/photo/2017/09/01/02/06/saree-2703580_1280.jpg'},
-      {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'https://cdn.pixabay.com/photo/2018/03/12/22/48/saree-3222056_1280.jpg'},
-      {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'https://cdn.pixabay.com/photo/2015/06/24/15/45/indian-821485_1280.jpg'},
-      {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'https://cdn.pixabay.com/photo/2016/08/26/15/06/indian-1621400_1280.jpg'},
-      {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'https://cdn.pixabay.com/photo/2017/09/01/02/06/saree-2703580_1280.jpg'},
-      {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'https://cdn.pixabay.com/photo/2018/03/12/22/48/saree-3222056_1280.jpg'},
-      {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'https://cdn.pixabay.com/photo/2015/06/24/15/45/indian-821485_1280.jpg'},
-      {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'https://cdn.pixabay.com/photo/2016/08/26/15/06/indian-1621400_1280.jpg'},
-      {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'https://cdn.pixabay.com/photo/2017/09/01/02/06/saree-2703580_1280.jpg'},
-      {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'https://cdn.pixabay.com/photo/2018/03/12/22/48/saree-3222056_1280.jpg'},
-      {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'https://cdn.pixabay.com/photo/2015/06/24/15/45/indian-821485_1280.jpg'},
-      {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'https://cdn.pixabay.com/photo/2016/08/26/15/06/indian-1621400_1280.jpg'},
-      {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'https://cdn.pixabay.com/photo/2017/09/01/02/06/saree-2703580_1280.jpg'},
-      {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'https://cdn.pixabay.com/photo/2018/03/12/22/48/saree-3222056_1280.jpg'},
-      {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'https://cdn.pixabay.com/photo/2015/06/24/15/45/indian-821485_1280.jpg'},
-      {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'https://cdn.pixabay.com/photo/2016/08/26/15/06/indian-1621400_1280.jpg'},
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Saree & Dupatta Shop'),
         backgroundColor: Colors.pink,
         actions: [
+          // IconButton(
+          //   icon: const Icon(Icons.favorite),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => WishlistScreen(
+          //           wishlistItems: wishlistManager.items,
+          //         ),
+          //       ),
+          //     );
+          //   },
+          // ),
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () => Navigator.pushNamed(context, '/cart'),
@@ -51,9 +64,9 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-
             const SizedBox(height: 3),
-            // 🔹 Carousel Section
+
+            // 🔹 Banner Carousel
             CarouselSlider(
               options: CarouselOptions(
                 height: 160,
@@ -64,12 +77,10 @@ class HomeScreen extends StatelessWidget {
               items: bannerImages.map((url) {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(url, fit: BoxFit.cover, width: double.infinity),
+                  child: Image.asset(url, fit: BoxFit.cover, width: double.infinity),
                 );
               }).toList(),
             ),
-
-            // const SizedBox(height: 5),
 
             // 🔹 Product Grid
             Padding(
@@ -86,6 +97,8 @@ class HomeScreen extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   final product = products[index];
+                  final isWishlisted = WishlistManager.isInWishlist(product);
+
                   return Card(
                     color: const Color(0xFFFFF0F0),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -95,19 +108,63 @@ class HomeScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // 🖼 Product Image + ❤️ Wishlist Overlay
                           Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                product['image']!,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
-                              ),
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    product['image']!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        const Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 6,
+                                  right: 6,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (isWishlisted) {
+                                          WishlistManager.removeItem(product);
+                                        } else {
+                                          WishlistManager.addItem(product);
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        // ignore: deprecated_member_use
+                                        color: Colors.white.withOpacity(0.9),
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            // ignore: deprecated_member_use
+                                            color: Colors.black.withOpacity(0.1),
+                                            blurRadius: 3,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      child: Icon(
+                                        isWishlisted ? Icons.favorite : Icons.favorite_border,
+                                        color: isWishlisted ? Colors.pink : Colors.grey,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+
                           const SizedBox(height: 4),
+
+                          // 🧾 Product Info
                           Text(
                             product['name']!,
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -119,6 +176,8 @@ class HomeScreen extends StatelessWidget {
                             style: const TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 4),
+
+                          // 🛒 Buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -144,12 +203,12 @@ class HomeScreen extends StatelessWidget {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
                                   onPressed: () {
-                                    final singleItem  = [
+                                    final singleItem = [
                                       {
-                                        'name': product['name'], // replace with your variable
+                                        'name': product['name'],
                                         'price': product['price'],
                                         'quantity': 1,
-                                        'image': product['image'], // optional, if you have it
+                                        'image': product['image'],
                                       }
                                     ];
                                     Navigator.push(
