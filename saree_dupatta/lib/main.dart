@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/cart_screen.dart';
+import 'package:saree_dupatta/data/wishlist_manager.dart'; 
+import 'package:saree_dupatta/data/cart_manager.dart';
 
-void main() {
+void main()  async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await WishlistManager.initialize();
+  await CartManager.initialize();
   runApp(const MyApp());
 }
 

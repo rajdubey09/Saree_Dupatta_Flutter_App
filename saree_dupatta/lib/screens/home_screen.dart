@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:saree_dupatta/models/product_model.dart';
 import 'package:saree_dupatta/screens/checkout_screen.dart';
 import 'package:saree_dupatta/data/wishlist_manager.dart';
+import '../data/cart_manager.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -83,8 +85,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisSpacing: 5,
                 ),
                 itemBuilder: (context, index) {
-                  final product = products[index];
-                  final isWishlisted = WishlistManager.isInWishlist(product);
+                  final productMap = products[index];
+                  final product = Product(
+                    // id: index.toString(),
+                    name: productMap['name']!,
+                    imageUrl: productMap['image']!,
+                    price: double.parse(productMap['price']!.replaceAll('₹', '')),
+                    // description: productMap['name']!,
+                  );
+
+                  final productAsMap = {
+                    'name': product.name,
+                    'price': '₹${product.price.toStringAsFixed(0)}',
+                    'image': product.imageUrl,
+                  };
+
+                  final isWishlisted = WishlistManager.isInWishlist(productAsMap);
+                  final isInCart = CartManager.isInCart(product);
 
                   return Card(
                     color: const Color(0xFFFFF0F0),
@@ -102,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
                                   child: Image.asset(
-                                    product['image']!,
+                                    product.imageUrl,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                     errorBuilder: (context, error, stackTrace) =>
@@ -113,12 +130,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   top: 6,
                                   right: 6,
                                   child: GestureDetector(
-                                    onTap: () {
+                                    onTap: () async{
                                       setState(() {
                                         if (isWishlisted) {
-                                          WishlistManager.removeItem(product);
+                                          WishlistManager.removeItem(productAsMap);
                                         } else {
-                                          WishlistManager.addItem(product);
+                                          WishlistManager.addItem(productAsMap);
                                         }
                                       });
                                     },
@@ -153,13 +170,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           // 🧾 Product Info
                           Text(
-                            product['name']!,
+                            product.name,
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            product['price']!,
+                            '₹${product.price.toStringAsFixed(0)}',
                             style: const TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 4),
@@ -176,8 +193,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
-                                  onPressed: () {},
-                                  child: const Text("Add to Cart", style: TextStyle(fontSize: 12)),
+                                  onPressed: () async {
+                                    if (isInCart) {
+                                      await CartManager.removeFromCart(product);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Removed from Cart')),
+                                      );
+                                    } else {
+                                      await CartManager.addToCart(product);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Added to Cart')),
+                                      );
+                                    }
+                                    setState(() {});
+                                  },
+                                  child: Text(isInCart ? "Added" : "Add to Cart",
+                                    style: const TextStyle(fontSize: 12),),
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -192,10 +223,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onPressed: () {
                                     final singleItem = [
                                       {
-                                        'name': product['name'],
-                                        'price': product['price'],
+                                        'name': product.name,
+                                        'price': '₹${product.price.toStringAsFixed(0)}',
                                         'quantity': 1,
-                                        'image': product['image'],
+                                        'image': product.imageUrl,
                                       }
                                     ];
                                     Navigator.push(
@@ -203,9 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       MaterialPageRoute(
                                         builder: (context) => CheckoutScreen(
                                           cartItems: singleItem,
-                                          totalAmount: product['price'] != null
-                                              ? double.tryParse(product['price']!.replaceAll('₹', '')) ?? 0.0
-                                              : 0.0,
+                                          totalAmount: product.price
                                         ),
                                       ),
                                     );
