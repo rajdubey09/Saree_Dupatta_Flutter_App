@@ -17,18 +17,18 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/saree1.png',
     'assets/images/saree2.jpg',
     'assets/images/saree3.jpg',
-    'assets/images/saree4.jpg',
+    'assets/images/saree4.png',
   ];
 
   final List<Map<String, String>> products = [
     {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'assets/images/saree1.png'},
     {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'assets/images/saree2.jpg'},
     {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'assets/images/saree3.jpg'},
-    {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.jpg'},
+    {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.png'},
     {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'assets/images/saree1.png'},
     {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'assets/images/saree2.jpg'},
     {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'assets/images/saree3.jpg'},
-    {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.jpg'},
+    {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.png'},
   ];
 
   @override
@@ -38,19 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Saree & Dupatta Shop'),
         backgroundColor: Colors.pink,
         actions: [
-          // IconButton(
-          //   icon: const Icon(Icons.favorite),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) => WishlistScreen(
-          //           wishlistItems: wishlistManager.items,
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // ),
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () => Navigator.pushNamed(context, '/cart'),
