@@ -4,7 +4,7 @@ import 'screens/profile_screen.dart';
 import 'screens/cart_screen.dart';
 import 'package:saree_dupatta/data/wishlist_manager.dart'; 
 import 'package:saree_dupatta/data/cart_manager.dart';
-
+import 'i18n/app_strings.dart';
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
   await WishlistManager.initialize();
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Saree & Dupatta Shop',
+      title: AppStrings.appName,
       theme: ThemeData(primarySwatch: Colors.pink),
       initialRoute: '/',
       routes: {

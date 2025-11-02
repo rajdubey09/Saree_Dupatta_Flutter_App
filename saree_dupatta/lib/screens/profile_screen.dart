@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:saree_dupatta/screens/wishlist_screen.dart';
 import 'cart_screen.dart';
 import 'package:saree_dupatta/data/wishlist_manager.dart';
+import '../i18n/app_strings.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -12,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: const Text(AppStrings.profileTitle),
         backgroundColor: Colors.pinkAccent,
         elevation: 2,
       ),
@@ -86,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
             _buildSectionTitle("My Account"),
             _buildOptionTile(
               icon: Icons.shopping_bag_outlined,
-              title: "My Orders",
+              title: AppStrings.myOrders,
               subtitle: "View all your orders",
               onTap: () {
                 // TODO: navigate to Orders screen
@@ -94,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             _buildOptionTile(
               icon: Icons.shopping_cart_outlined,
-              title: "My Cart",
+              title: AppStrings.cartTitle,
               subtitle: "Items you added to your cart",
               onTap: () {
                 Navigator.push(
@@ -105,7 +106,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             _buildOptionTile(
               icon: Icons.favorite_border,
-              title: "My Wishlist",
+              title: AppStrings.myWishlist,
               subtitle: "Your saved favourites",
               onTap: () {
                 final wishlistItems = WishlistManager.getWishlist();
@@ -152,14 +153,14 @@ class ProfileScreen extends StatelessWidget {
             ),
             _buildOptionTile(
               icon: Icons.logout,
-              title: "Logout",
+              title: AppStrings.logout,
               subtitle: "Sign out from your account",
               iconColor: Colors.redAccent,
               onTap: () {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text("Logout"),
+                    title: const Text(AppStrings.logout),
                     content: const Text("Are you sure you want to logout?"),
                     actions: [
                       TextButton(
@@ -177,7 +178,7 @@ class ProfileScreen extends StatelessWidget {
                           );
                           // TODO: perform actual logout (Firebase signOut etc.) when integrated
                         },
-                        child: const Text("Logout"),
+                        child: const Text(AppStrings.logout),
                       ),
                     ],
                   ),

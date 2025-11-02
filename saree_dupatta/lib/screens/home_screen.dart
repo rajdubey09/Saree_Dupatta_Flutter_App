@@ -4,6 +4,7 @@ import 'package:saree_dupatta/models/product_model.dart';
 import 'package:saree_dupatta/screens/checkout_screen.dart';
 import 'package:saree_dupatta/data/wishlist_manager.dart';
 import '../data/cart_manager.dart';
+import '../i18n/app_strings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Saree & Dupatta Shop'),
+        title: const Text(AppStrings.appName),
         backgroundColor: Colors.pink,
         actions: [
           IconButton(
