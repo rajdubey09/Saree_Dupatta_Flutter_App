@@ -10,27 +10,29 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.5.1  # ✅ add this (not 'riverpod')
-  firebase_core: ^2.0.0
-  cloud_firestore: ^4.0.0
-  firebase_auth: ^4.0.0
-  firebase_storage: ^11.0.0
-  firebase_messaging: ^14.0.0
-  riverpod: ^2.0.0   # or provider
-  image_picker: ^0.8.0
+  flutter_riverpod: ^3.0.3  # ✅ add this (not 'riverpod')
+  fluttertoast: ^9.0.0
+  firebase_core: ^4.2.1
+  cloud_firestore: ^6.1.0
+  firebase_auth: ^6.1.2
+  firebase_app_check: ^0.4.1+2
+  firebase_storage: ^13.0.4
+  firebase_messaging: ^16.0.4
+  riverpod: ^3.0.3   # or provider
+  image_picker: ^1.2.0
   cached_network_image: ^3.0.0
   hive: ^2.0.0
-  csv: ^5.0.0
+  csv: ^6.0.0
 
   cupertino_icons: ^1.0.8
   carousel_slider: ^5.1.1
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 flutter:
   uses-material-design: true
 

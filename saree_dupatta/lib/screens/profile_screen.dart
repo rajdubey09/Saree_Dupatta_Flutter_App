@@ -1,5 +1,7 @@
-// lib/screens/profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saree_dupatta/screens/wishlist_screen.dart';
 import 'cart_screen.dart';
 import 'package:saree_dupatta/data/wishlist_manager.dart';
@@ -8,8 +10,38 @@ import '../i18n/app_strings.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  // ✅ Updated logout function — handles Firebase + SharedPref + Navigation
+  Future<void> _performLogout(BuildContext context) async {
+    try {
+      // Firebase logout
+      await FirebaseAuth.instance.signOut();
+
+      // Remove login flag
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('isLoggedIn');
+
+      // Toast confirmation
+      Fluttertoast.showToast(
+        msg: "Logged out successfully 👋",
+        backgroundColor: Colors.pinkAccent,
+        textColor: Colors.white,
+      );
+
+      // Navigate to login screen and clear route stack
+      if (!context.mounted) return;
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Logout failed: $e",
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -20,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 👤 Profile Header (left avatar, right details + edit)
+            // 👤 Profile Header
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -44,13 +76,13 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Raj Dubey',
+                        Text(
+                          user?.displayName ?? 'Guest User',
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          'raj.sareeshop@gmail.com',
+                        Text(
+                          user?.email ?? 'skip.login@gmail.com',
                           style: TextStyle(color: Colors.grey),
                         ),
                         const SizedBox(height: 10),
@@ -81,17 +113,13 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // const SizedBox(height: 15),
-
             // 📦 My Account Section
             _buildSectionTitle("My Account"),
             _buildOptionTile(
               icon: Icons.shopping_bag_outlined,
               title: AppStrings.myOrders,
               subtitle: "View all your orders",
-              onTap: () {
-                // TODO: navigate to Orders screen
-              },
+              onTap: () {},
             ),
             _buildOptionTile(
               icon: Icons.shopping_cart_outlined,
@@ -110,15 +138,14 @@ class ProfileScreen extends StatelessWidget {
               subtitle: "Your saved favourites",
               onTap: () {
                 final wishlistItems = WishlistManager.getWishlist();
-
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => WishlistScreen(wishlistItems: wishlistItems)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          WishlistScreen(wishlistItems: wishlistItems)),
                 );
               },
             ),
-
-            // const SizedBox(height: 15),
 
             // 🏠 Address & Payment Section
             _buildSectionTitle("Settings"),
@@ -126,20 +153,14 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.location_on_outlined,
               title: "Saved Addresses",
               subtitle: "Your delivery locations",
-              onTap: () {
-                // TODO: navigate to Addresses
-              },
+              onTap: () {},
             ),
             _buildOptionTile(
               icon: Icons.payment_outlined,
               title: "Payment Methods",
               subtitle: "UPI, Cards, Wallets",
-              onTap: () {
-                // TODO: navigate to Payment Methods
-              },
+              onTap: () {},
             ),
-
-            // const SizedBox(height: 15),
 
             // ⚙️ More Options
             _buildSectionTitle("More"),
@@ -147,10 +168,10 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.settings_outlined,
               title: "App Settings",
               subtitle: "Language, Notifications, etc.",
-              onTap: () {
-                // TODO: navigate to app settings
-              },
+              onTap: () {},
             ),
+
+            // 🚪 Logout Option
             _buildOptionTile(
               icon: Icons.logout,
               title: AppStrings.logout,
@@ -173,10 +194,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Logged out successfully")),
-                          );
-                          // TODO: perform actual logout (Firebase signOut etc.) when integrated
+                          _performLogout(context);
                         },
                         child: const Text(AppStrings.logout),
                       ),
@@ -198,7 +216,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // Section Title Widget
+  // 📂 Section title
   Widget _buildSectionTitle(String title) {
     return Container(
       width: double.infinity,
@@ -211,7 +229,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // List Tile Widget for options (keeps signature same as your original)
+  // 📋 Option tile
   Widget _buildOptionTile({
     required IconData icon,
     required String title,
