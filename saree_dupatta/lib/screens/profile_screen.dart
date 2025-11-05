@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saree_dupatta/data/cart_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,6 +16,8 @@ class ProfileScreen extends StatelessWidget {
     try {
       // Firebase logout
       await FirebaseAuth.instance.signOut();
+      await CartManager.clearCart();
+      await WishlistManager.clearWishlist();
 
       // Remove login flag
       final prefs = await SharedPreferences.getInstance();
@@ -136,8 +139,9 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.favorite_border,
               title: AppStrings.myWishlist,
               subtitle: "Your saved favourites",
-              onTap: () {
-                final wishlistItems = WishlistManager.getWishlist();
+              onTap: () async{
+                await WishlistManager.initialize();
+                final wishlistItems = WishlistManager.wishlistItems;
                 Navigator.push(
                   context,
                   MaterialPageRoute(

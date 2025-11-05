@@ -16,6 +16,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final WishlistManager wishlistManager = WishlistManager();
 
+  int _currentBannerIndex = 0;
+
   final List<String> bannerImages = [
     'assets/images/saree1.png',
     'assets/images/saree2.jpg',
@@ -35,6 +37,19 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadInitialData();
+  }
+
+  /// 🧠 This ensures cart syncs with SharedPreferences
+  Future<void> _loadInitialData() async {
+    await CartManager.initialize();
+    await WishlistManager.initialize();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -52,114 +67,156 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 3),
+      body: RefreshIndicator(
+        onRefresh: _loadInitialData,
+        child: SingleChildScrollView( 
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              const SizedBox(height: 3),
 
-            // 🔹 Banner Carousel
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 160,
-                autoPlay: true,
-                enlargeCenterPage: true,
-                viewportFraction: 0.9,
+              // 🔹 Banner Carousel
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  CarouselSlider.builder(
+                    itemCount: bannerImages.length,
+                    itemBuilder: (context, index, realIndex) {
+                      final url = bannerImages[index];
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          url,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      );
+                    },
+                    options: CarouselOptions(
+                      height: 160,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                      viewportFraction: 0.9,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _currentBannerIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+
+                  // 🔸 Dots Indicator (Overlay)
+                  Positioned(
+                    bottom: 18,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: bannerImages.asMap().entries.map((entry) {
+                        bool isActive = entry.key == _currentBannerIndex;
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: isActive ? 9.0 : 6.0,
+                          height: 6.0,
+                          margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isActive
+                                ? Colors.pinkAccent
+                                : Colors.black.withOpacity(0.3), // 👈 clean visible dots
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
-              items: bannerImages.map((url) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(url, fit: BoxFit.cover, width: double.infinity),
-                );
-              }).toList(),
-            ),
 
-            // 🔹 Product Grid
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: products.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.72,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                ),
-                itemBuilder: (context, index) {
-                  final productMap = products[index];
-                  final product = Product(
-                    // id: index.toString(),
-                    name: productMap['name']!,
-                    imageUrl: productMap['image']!,
-                    price: double.parse(productMap['price']!.replaceAll('₹', '')),
-                    // description: productMap['name']!,
-                  );
+              // 🔹 Product Grid
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: products.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.72,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                  ),
+                  itemBuilder: (context, index) {
+                    final productMap = products[index];
+                    final product = Product(
+                      // id: index.toString(),
+                      name: productMap['name']!,
+                      imageUrl: productMap['image']!,
+                      price: double.parse(productMap['price']!.replaceAll('₹', '')),
+                      // description: productMap['name']!,
+                    );
 
-                  final productAsMap = {
-                    'name': product.name,
-                    'price': '₹${product.price.toStringAsFixed(0)}',
-                    'image': product.imageUrl,
-                  };
+                    final productAsMap = {
+                      'name': product.name,
+                      'price': '₹${product.price.toStringAsFixed(0)}',
+                      'image': product.imageUrl,
+                    };
 
-                  final isWishlisted = WishlistManager.isInWishlist(productAsMap);
-                  final isInCart = CartManager.isInCart(product);
+                    final isWishlisted = WishlistManager.isInWishlist(productAsMap);
+                    final isInCart = CartManager.isInCart(product);
 
-                  return Card(
-                    color: const Color(0xFFFFF0F0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 🖼 Product Image + ❤️ Wishlist Overlay
-                          Expanded(
-                            child: Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.asset(
-                                    product.imageUrl,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        const Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
+                    return Card(
+                      color: const Color(0xFFFFF0F0),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 🖼 Product Image + ❤️ Wishlist Overlay
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.asset(
+                                      product.imageUrl,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      errorBuilder: (context, error, stackTrace) =>
+                                          const Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
+                                    ),
                                   ),
-                                ),
-                                Positioned(
-                                  top: 6,
-                                  right: 6,
-                                  child: GestureDetector(
-                                    onTap: () async{
-                                      setState(() {
-                                        if (isWishlisted) {
-                                          WishlistManager.removeItem(productAsMap);
-                                        } else {
-                                          WishlistManager.addItem(productAsMap);
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        // ignore: deprecated_member_use
-                                        color: Colors.white.withOpacity(0.9),
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            // ignore: deprecated_member_use
-                                            color: Colors.black.withOpacity(0.1),
-                                            blurRadius: 3,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      padding: const EdgeInsets.all(4),
-                                      child: Icon(
-                                        isWishlisted ? Icons.favorite : Icons.favorite_border,
-                                        color: isWishlisted ? Colors.pink : Colors.grey,
-                                        size: 20,
+                                  Positioned(
+                                    top: 6,
+                                    right: 6,
+                                    child: GestureDetector(
+                                      onTap: () async{
+                                        setState(() {
+                                          if (isWishlisted) {
+                                            WishlistManager.removeItem(productAsMap);
+                                          } else {
+                                            WishlistManager.addItem(productAsMap);
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          // ignore: deprecated_member_use
+                                          color: Colors.white.withOpacity(0.9),
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              // ignore: deprecated_member_use
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 3,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        padding: const EdgeInsets.all(4),
+                                        child: Icon(
+                                          isWishlisted ? Icons.favorite : Icons.favorite_border,
+                                          color: isWishlisted ? Colors.pink : Colors.grey,
+                                          size: 20,
                                       ),
                                     ),
                                   ),
@@ -190,8 +247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.pink[50],
-                                    foregroundColor: Colors.pink,
+                                    backgroundColor: isInCart ? Colors.grey[300] : Colors.pink[50],
+                                    foregroundColor: isInCart ? Colors.grey[600] : Colors.pink,
                                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
@@ -201,61 +258,62 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(content: Text('Removed from Cart')),
                                       );
-                                    } else {
-                                      await CartManager.addToCart(product);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Added to Cart')),
-                                      );
-                                    }
-                                    setState(() {});
-                                  },
-                                  child: Text(isInCart ? "Added" : "Add to Cart",
-                                    style: const TextStyle(fontSize: 12),),
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.pink,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                  onPressed: () {
-                                    final singleItem = [
-                                      {
-                                        'name': product.name,
-                                        'price': '₹${product.price.toStringAsFixed(0)}',
-                                        'quantity': 1,
-                                        'image': product.imageUrl,
+                                      } else {
+                                        await CartManager.addToCart(product);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Added to Cart')),
+                                        );
                                       }
-                                    ];
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CheckoutScreen(
-                                          cartItems: singleItem,
-                                          totalAmount: product.price
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text("Buy Now", style: TextStyle(fontSize: 12)),
+                                      setState(() {});
+                                    },
+                                    child: Text(isInCart ? "Added" : "Add to Cart",
+                                      style: const TextStyle(fontSize: 12),),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.pink,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                    ),
+                                    onPressed: () {
+                                      final singleItem = [
+                                        {
+                                          'name': product.name,
+                                          'price': '₹${product.price.toStringAsFixed(0)}',
+                                          'quantity': 1,
+                                          'image': product.imageUrl,
+                                        }
+                                      ];
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CheckoutScreen(
+                                            cartItems: singleItem,
+                                            totalAmount: product.price
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text("Buy Now", style: TextStyle(fontSize: 12)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }

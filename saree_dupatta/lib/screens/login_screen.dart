@@ -71,7 +71,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Save login state
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
+      final usersharedpref = FirebaseAuth.instance.currentUser;
+      if (usersharedpref != null) {
+        await prefs.setString('userEmail', usersharedpref.email ?? '');
+        await prefs.setBool('isLoggedIn', true);
+      }
+      else {
+        await prefs.remove('userEmail');
+        await prefs.setBool('isLoggedIn', false);
+      }
 
       // showToast("Welcome back, $fullName 👋");
       Fluttertoast.showToast(
