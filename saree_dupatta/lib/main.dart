@@ -21,6 +21,7 @@ void main()  async {
 
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
+    webProvider: ReCaptchaV3Provider('6LfBLgQsAAAAAPGHkGIqB3SM39T7yHjOK0O0Gmrb'),
   );
 
   await WishlistManager.initialize();

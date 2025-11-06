@@ -170,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.lock_outline,
-                      size: 80, color: Colors.pinkAccent),
+                      size: 60, color: Colors.pinkAccent),
                   const SizedBox(height: 10),
                   const Text(
                     "Welcome Back",
@@ -217,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     validator: (value) =>
                         value!.isEmpty ? "Please enter your password" : null,
                   ),
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 0),
 
                   Align(
                     alignment: Alignment.centerRight,
@@ -282,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
 
                   // Skip login
                   TextButton(
