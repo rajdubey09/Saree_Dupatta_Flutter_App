@@ -79,7 +79,7 @@ class OrderSuccessScreen extends StatelessWidget {
                   Navigator.popUntil(context, (route) => route.isFirst);
                 },
                 child: const Text(
-                  "Back to Home",
+                  "Continue Shopping",
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
