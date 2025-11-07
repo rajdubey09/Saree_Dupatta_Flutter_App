@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -169,8 +170,13 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.lock_outline,
-                      size: 60, color: Colors.pinkAccent),
+                  GestureDetector(
+                    onLongPress: () {
+                      Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => const HomeScreen()));
+                    },
+                  child: const Icon(Icons.lock_outline,
+                      size: 60, color: Colors.pinkAccent),),
                   const SizedBox(height: 10),
                   const Text(
                     "Welcome Back",

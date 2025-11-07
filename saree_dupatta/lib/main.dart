@@ -9,8 +9,6 @@ import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:saree_dupatta/data/wishlist_manager.dart'; 
 import 'package:saree_dupatta/data/cart_manager.dart';
-// import 'i18n/app_strings.dart';
-// import 'data/auth_manager.dart';
 import 'screens/login_screen.dart';
 
 void main()  async {
