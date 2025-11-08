@@ -23,11 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/saree2.jpg',
     'assets/images/saree3.jpg',
     'assets/images/saree4.png',
+    'assets/images/saree5.jpg',
+    'assets/images/saree3.jpg',
+    'assets/images/saree4.png',
   ];
 
   final List<Map<String, String>> products = [
     {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'assets/images/saree1.png'},
-    {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'assets/images/saree2.jpg'},
+    {'name': 'Cotton Printed Saree', 'price': '₹799', 'image': 'assets/images/saree5.jpg'},
     {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'assets/images/saree3.jpg'},
     {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.png'},
     {'name': 'Banarasi Silk Saree', 'price': '₹1299', 'image': 'assets/images/saree1.png'},
@@ -35,6 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
     {'name': 'Designer Dupatta', 'price': '₹499', 'image': 'assets/images/saree3.jpg'},
     {'name': 'Wedding Saree', 'price': '₹1999', 'image': 'assets/images/saree4.png'},
   ];
+
+  String searchQuery = '';
+  List<Map<String, String>> get filteredProducts {
+    if (searchQuery.isEmpty) return products;
+    return products.where((product) =>
+      product['name']!.toLowerCase().contains(searchQuery.toLowerCase())
+    ).toList();
+  }
 
   @override
   void initState() {
@@ -74,6 +85,28 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               const SizedBox(height: 3),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search products type...',
+                    suffixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: const Color(0xFFFFF0F0),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value;
+                    });
+                  },
+                ),
+              ),
 
               // 🔹 Banner Carousel
               Stack(
@@ -136,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: products.length,
+                  itemCount: filteredProducts.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.72,
@@ -144,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSpacing: 5,
                   ),
                   itemBuilder: (context, index) {
-                    final productMap = products[index];
+                    final productMap = filteredProducts[index];
                     final product = Product(
                       // id: index.toString(),
                       name: productMap['name']!,
@@ -182,7 +215,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fit: BoxFit.cover,
                                       width: double.infinity,
                                       errorBuilder: (context, error, stackTrace) =>
-                                          const Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
+                                        Container(
+                                          height: 120,
+                                          width: 100,
+                                          color: Colors.grey[200],
+                                          alignment: Alignment.center,
+                                          child: const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                                        )
                                     ),
                                   ),
                                   Positioned(

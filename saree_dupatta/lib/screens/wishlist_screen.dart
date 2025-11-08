@@ -1,19 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:saree_dupatta/screens/checkout_screen.dart';
+import 'package:saree_dupatta/data/cart_manager.dart';
+import 'package:saree_dupatta/data/wishlist_manager.dart';
+import 'package:saree_dupatta/models/product_model.dart';
 
-class WishlistScreen extends StatelessWidget {
-  final List<Map<String, String>> wishlistItems;
+class WishlistScreen extends StatefulWidget {
+  const WishlistScreen({super.key});
 
-  const WishlistScreen({super.key, required this.wishlistItems});
+  @override
+  State<WishlistScreen> createState() => _WishlistScreenState();
+}
+
+class _WishlistScreenState extends State<WishlistScreen> {
+  List<Map<String, String>> wishlistItems = [];
+  Set<String> cartProductNames = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWishlist();
+    _loadCartItems();
+  }
+
+  Future<void> _loadWishlist() async {
+    await WishlistManager.initialize();
+    setState(() {
+      wishlistItems = List<Map<String, String>>.from(WishlistManager.wishlistItems);
+    });
+  }
+
+  Future<void> _loadCartItems() async {
+    await CartManager.initialize();
+    setState(() {
+      cartProductNames = CartManager.cartItems.map((e) => e.name).toSet();
+    });
+  }
+
+  Future<void> _addToCart(Map<String, String> product) async {
+    final newProduct = Product(
+      name: product['name'] ?? '',
+      price: double.tryParse(product['price']?.replaceAll('₹', '') ?? '') ?? 0.0,
+      imageUrl: product['image'] ?? '',
+    );
+
+    await CartManager.addToCart(newProduct);
+    setState(() {
+      cartProductNames.add(newProduct.name);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Added to cart!'), duration: Duration(seconds: 1)),
+    );
+  }
+
+  Future<void> _removeFromWishlist(Map<String, String> product) async {
+    await WishlistManager.removeItem(product);
+    setState(() {
+      wishlistItems.removeWhere((item) => item['name'] == product['name']);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Removed from wishlist'), duration: Duration(seconds: 1)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // light background like cart screen
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('My Wishlist'),
         backgroundColor: Colors.pinkAccent,
-        // elevation: 0,
       ),
       body: wishlistItems.isEmpty
           ? const Center(
@@ -23,12 +80,13 @@ class WishlistScreen extends StatelessWidget {
               ),
             )
           : SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(12, 2, 12, 5), // tighter padding
+              padding: const EdgeInsets.fromLTRB(12, 2, 12, 5),
               child: Column(
                 children: wishlistItems.map((product) {
+                  final alreadyInCart = cartProductNames.contains(product['name']);
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 6),
-                    color: const Color.fromARGB(255, 248, 247, 247), // soft pink card
+                    color: const Color.fromARGB(255, 248, 247, 247),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -51,8 +109,7 @@ class WishlistScreen extends StatelessWidget {
                                   width: 100,
                                   color: Colors.grey[200],
                                   alignment: Alignment.center,
-                                  child: const Icon(Icons.broken_image,
-                                      size: 40, color: Colors.grey),
+                                  child: const Icon(Icons.broken_image, size: 100, color: Colors.grey),
                                 );
                               },
                             ),
@@ -64,10 +121,7 @@ class WishlistScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   product['name']!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -83,25 +137,15 @@ class WishlistScreen extends StatelessWidget {
                                 const SizedBox(height: 3),
                                 Row(
                                   children: [
-                                    // 🛒 Add to Cart Icon
-                                    IconButton(
-                                      onPressed: () {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Added to cart!'),
-                                            duration: Duration(seconds: 1),
-                                          ),
-                                        );
-                                      },
-                                      icon: const Icon(Icons.shopping_cart),
-                                      color: Colors.red,
-                                      iconSize: 26,
-                                      tooltip: 'Add to Cart',
-                                    ),
-
+                                    if (!alreadyInCart)
+                                      IconButton(
+                                        onPressed: () => _addToCart(product),
+                                        icon: const Icon(Icons.shopping_cart),
+                                        color: Colors.red,
+                                        iconSize: 26,
+                                        tooltip: 'Add to Cart',
+                                      ),
                                     const SizedBox(width: 8),
-
-                                    // 💳 Buy Now Icon
                                     IconButton(
                                       onPressed: () {
                                         final singleItem = [
@@ -118,9 +162,7 @@ class WishlistScreen extends StatelessWidget {
                                             builder: (context) => CheckoutScreen(
                                               cartItems: singleItem,
                                               totalAmount: product['price'] != null
-                                                  ? double.tryParse(product['price']!
-                                                          .replaceAll('₹', '')) ??
-                                                      0.0
+                                                  ? double.tryParse(product['price']!.replaceAll('₹', '')) ?? 0.0
                                                   : 0.0,
                                             ),
                                           ),
@@ -133,15 +175,13 @@ class WishlistScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                // 🗑 Remove Button
                                 GestureDetector(
-                                  // onTap: () => _removeItem(item),
+                                  onTap: () => _removeFromWishlist(product),
                                   child: const Text(
                                     'Remove',
                                     style: TextStyle(
                                       color: Colors.redAccent,
                                       fontWeight: FontWeight.w500,
-                                      // decoration: TextDecoration.underline,
                                     ),
                                   ),
                                 ),

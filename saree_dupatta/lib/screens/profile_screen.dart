@@ -140,13 +140,13 @@ class ProfileScreen extends StatelessWidget {
               title: AppStrings.myWishlist,
               subtitle: "Your saved favourites",
               onTap: () async{
-                await WishlistManager.initialize();
-                final wishlistItems = WishlistManager.wishlistItems;
+                // await WishlistManager.initialize();
+                // final wishlistItems = WishlistManager.wishlistItems;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          WishlistScreen(wishlistItems: wishlistItems)),
+                          const WishlistScreen(), ),
                 );
               },
             ),
