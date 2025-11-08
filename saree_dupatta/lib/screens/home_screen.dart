@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 160,
                       autoPlay: true,
                       enlargeCenterPage: true,
-                      viewportFraction: 0.9,
+                      viewportFraction: 0.8,
                       onPageChanged: (index, reason) {
                         setState(() {
                           _currentBannerIndex = index;
@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // 🔸 Dots Indicator (Overlay)
                   Positioned(
-                    bottom: 18,
+                    bottom: 15,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: bannerImages.asMap().entries.map((entry) {
@@ -115,12 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           width: isActive ? 9.0 : 6.0,
-                          height: 6.0,
+                          height: 8.0,
                           margin: const EdgeInsets.symmetric(horizontal: 3.0),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: isActive
-                                ? Colors.pinkAccent
+                                ? const Color.fromARGB(255, 255, 255, 255)
                                 : Colors.black.withOpacity(0.3), // 👈 clean visible dots
                           ),
                         );

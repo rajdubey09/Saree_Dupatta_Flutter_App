@@ -9,26 +9,26 @@ class WishlistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF5F5), // light background like cart screen
+      backgroundColor: Colors.grey[100], // light background like cart screen
       appBar: AppBar(
         title: const Text('My Wishlist'),
         backgroundColor: Colors.pinkAccent,
-        elevation: 0,
+        // elevation: 0,
       ),
       body: wishlistItems.isEmpty
           ? const Center(
               child: Text(
                 'No items in your wishlist yet ❤️',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
             )
           : SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12), // tighter padding
+              padding: const EdgeInsets.fromLTRB(12, 2, 12, 5), // tighter padding
               child: Column(
                 children: wishlistItems.map((product) {
                   return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    color: const Color(0xFFFFEDEE), // soft pink card
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    color: const Color.fromARGB(255, 248, 247, 247), // soft pink card
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -42,13 +42,13 @@ class WishlistScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
                               product['image']!,
-                              height: 90,
-                              width: 90,
+                              height: 120,
+                              width: 100,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  height: 90,
-                                  width: 90,
+                                  height: 120,
+                                  width: 100,
                                   color: Colors.grey[200],
                                   alignment: Alignment.center,
                                   child: const Icon(Icons.broken_image,
@@ -80,7 +80,7 @@ class WishlistScreen extends StatelessWidget {
                                     fontSize: 15,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 3),
                                 Row(
                                   children: [
                                     // 🛒 Add to Cart Icon
@@ -132,6 +132,18 @@ class WishlistScreen extends StatelessWidget {
                                       tooltip: 'Buy Now',
                                     ),
                                   ],
+                                ),
+                                // 🗑 Remove Button
+                                GestureDetector(
+                                  // onTap: () => _removeItem(item),
+                                  child: const Text(
+                                    'Remove',
+                                    style: TextStyle(
+                                      color: Colors.redAccent,
+                                      fontWeight: FontWeight.w500,
+                                      // decoration: TextDecoration.underline,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

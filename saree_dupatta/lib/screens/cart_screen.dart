@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saree_dupatta/screens/checkout_screen.dart';
-import '../data/cart_manager.dart'; // 👈 make sure path matches your structure
-import '../../models/product_model.dart'; // 👈 your Product model path
+import '../data/cart_manager.dart';
+import '../../models/product_model.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -172,7 +172,7 @@ class _CartScreenState extends State<CartScreen> {
                                       style: TextStyle(
                                         color: Colors.redAccent,
                                         fontWeight: FontWeight.w500,
-                                        decoration: TextDecoration.underline,
+                                        // decoration: TextDecoration.underline,
                                       ),
                                     ),
                                   ),
