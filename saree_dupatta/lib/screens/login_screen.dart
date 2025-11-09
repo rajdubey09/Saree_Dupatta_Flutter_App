@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isLoading = false;
+  bool _obscurePassword = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // ✅ Toast helper (safe wrapper)
@@ -209,21 +210,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 15),
 
                   // Password Field
+                  // TextFormField(
+                  //   controller: _passwordController,
+                  //   obscureText: true,
+                  //   decoration: InputDecoration(
+                  //     labelText: "Password",
+                  //     prefixIcon: const Icon(Icons.lock_outline,
+                  //         color: Colors.pinkAccent),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(12),
+                  //     ),
+                  //   ),
+                  //   validator: (value) =>
+                  //       value!.isEmpty ? "Please enter your password" : null,
+                  // ),
+
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: "Password",
-                      prefixIcon: const Icon(Icons.lock_outline,
-                          color: Colors.pinkAccent),
+                      prefixIcon: const Icon(Icons.lock_outline, color: Colors.pinkAccent),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    validator: (value) =>
-                        value!.isEmpty ? "Please enter your password" : null,
+                    validator: (value) => value!.isEmpty ? "Please enter your password" : null,
                   ),
-                  // const SizedBox(height: 0),
+
 
                   Align(
                     alignment: Alignment.centerRight,
