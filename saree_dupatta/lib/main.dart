@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saree_dupatta/screens/logintoplace.dart';
 import 'package:saree_dupatta/screens/signup_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => const CartScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
+        'logintoplace': (context) => const LoginToPlaceScreen(),
       },
       home: FutureBuilder<Widget>(
         future: _getStartScreen(),

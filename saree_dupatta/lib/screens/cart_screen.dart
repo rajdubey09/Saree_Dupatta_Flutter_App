@@ -12,6 +12,8 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   List<Product> cartItems = [];
+  Map<Product, int> quantities = {};
+  Map<Product, TextEditingController> quantityControllers = {};
 
   @override
   void initState() {
@@ -23,6 +25,10 @@ class _CartScreenState extends State<CartScreen> {
     await CartManager.initialize(); // refresh from shared prefs
     setState(() {
       cartItems = List<Product>.from(CartManager.cartItems);
+      for (var item in cartItems) {
+        quantities[item] = quantities[item] ?? 1;
+        quantityControllers[item] = TextEditingController(text: quantities[item].toString());
+      }
     });
   }
 
@@ -31,23 +37,24 @@ class _CartScreenState extends State<CartScreen> {
     _loadCart();
   }
 
-  void _incrementQuantity(Product product) async {
-    // For now, quantity tracking not stored in model, so we just notify user.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Quantity update feature coming soon')),
-    );
-  }
+  // void _incrementQuantity(Product product) async {
+  //   // For now, quantity tracking not stored in model, so we just notify user.
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text('Quantity update feature coming soon')),
+  //   );
+  // }
 
-  void _decrementQuantity(Product product) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Quantity update feature coming soon')),
-    );
-  }
+  // void _decrementQuantity(Product product) async {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text('Quantity update feature coming soon')),
+  //   );
+  // }
 
   double get totalAmount {
     double total = 0;
     for (var item in cartItems) {
-      total += item.price;
+      final qty = quantities[item] ?? 1;
+      total += item.price * qty;
     }
     return total;
   }
@@ -138,24 +145,31 @@ class _CartScreenState extends State<CartScreen> {
                                     children: [
                                       Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.grey[200],
+                                          color: const Color.fromARGB(255, 250, 250, 250),
                                           borderRadius: BorderRadius.circular(20),
                                         ),
                                         child: Row(
                                           children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.remove, size: 20),
-                                              onPressed: () => _decrementQuantity(item),
-                                            ),
-                                            const Text(
-                                              "1", // static quantity for now
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.add, size: 20),
-                                              onPressed: () => _incrementQuantity(item),
+                                            const Text("  Quantity:", style: TextStyle(fontWeight: FontWeight.w500)),
+                                            const SizedBox(width: 8),
+                                            SizedBox(
+                                              width: 70,
+                                              child: TextField(
+                                                controller: quantityControllers[item],
+                                                keyboardType: TextInputType.number,
+                                                maxLength: 5,
+                                                decoration: InputDecoration(
+                                                counterText: "", // hides character counter
+                                                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                                ),
+                                                onChanged: (value) {
+                                                  final qty = int.tryParse(value) ?? 1;
+                                                  setState(() {
+                                                    quantities[item] = qty;
+                                                  });
+                                                },
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -229,7 +243,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 'name': e.name,
                                                 'price': e.price,
                                                 'image': e.imageUrl,
-                                                'quantity': 1,
+                                                'quantity': quantities[e] ?? 1,
                                               })
                                           .toList(),
                                       totalAmount: totalAmount,

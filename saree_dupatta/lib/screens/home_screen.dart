@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saree_dupatta/models/product_model.dart';
 import 'package:saree_dupatta/screens/checkout_screen.dart';
 import 'package:saree_dupatta/data/wishlist_manager.dart';
@@ -294,13 +295,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onPressed: () async {
                                     if (isInCart) {
                                       await CartManager.removeFromCart(product);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Removed from Cart')),
-                                      );
+                                      // ScaffoldMessenger.of(context).showSnackBar(
+                                      //   const SnackBar(content: Text('Removed from Cart')),
+                                      Fluttertoast.showToast(msg: 'Removed from Cart', toastLength: Toast.LENGTH_SHORT, 
+                                        gravity: ToastGravity.BOTTOM, backgroundColor: Colors.pinkAccent, 
+                                        textColor: Colors.white, fontSize: 12,);
                                       } else {
                                         await CartManager.addToCart(product);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Added to Cart')),
+                                        Fluttertoast.showToast(msg: 'Added to Cart', toastLength: Toast.LENGTH_SHORT, 
+                                          gravity: ToastGravity.BOTTOM, backgroundColor: Colors.pinkAccent, 
+                                          textColor: Colors.white, fontSize: 12,
+                                        // ScaffoldMessenger.of(context).showSnackBar(
+                                        //   const SnackBar(content: Text('Added to Cart')),
                                         );
                                       }
                                       setState(() {});

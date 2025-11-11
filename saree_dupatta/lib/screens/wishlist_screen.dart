@@ -145,7 +145,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                         iconSize: 26,
                                         tooltip: 'Add to Cart',
                                       ),
-                                    const SizedBox(width: 8),
+                                    // const SizedBox(width: 1),
                                     IconButton(
                                       onPressed: () {
                                         final singleItem = [
